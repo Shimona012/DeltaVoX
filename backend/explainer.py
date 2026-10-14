@@ -12,7 +12,7 @@ Turns grounded acoustic facts into short coaching text.
 import json
 import os
 import concurrent.futures
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from backend import config
 
