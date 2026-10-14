@@ -98,7 +98,10 @@ def verify_csrf(request: Request) -> None:
     origin = request.headers.get("origin")
     if origin:
         own = f"{request.url.scheme}://{request.url.netloc}"
-        if origin != own and origin not in config.ALLOWED_ORIGINS:
+        allowed = set(config.ALLOWED_ORIGINS)
+        if own in {"http://localhost:8000", "http://127.0.0.1:8000"}:
+            allowed.update({"http://localhost:8000", "http://127.0.0.1:8000"})
+        if origin != own and origin not in allowed:
             raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Request blocked (cross-site origin).")
 
 
