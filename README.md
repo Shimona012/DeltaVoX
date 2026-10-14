@@ -132,3 +132,13 @@ pytest
 | **Phase 3** | **Contrastive Benchmark** | 5-level synthetic degradation spectrum (L0 Ideal $\rightarrow$ L4 Egregious) |
 | **Phase 4** | **Causal Explanations** | Grounded Gemini integration using metric deltas with strict offline fallback |
 | **Phase 5** | **Hardening & UI** | CSRF protection, rate limiting, responsive dual-waveform player, multi-theme UI |
+
+---
+
+##  AI Assistance & Tooling Disclosure
+In compliance with hackathon guidelines, the following AI tools and coding assistants were utilized during development:
+- **Google Antigravity (Pair Programming Assistant):** Used for architectural brainstorming, signal processing pipeline scaffolding, authoring the 50-test automated test suite, security audits (CSRF/rate limiting/path traversal), and documentation drafting.
+- **OpenAI Codex:** Used for debugging edge-case audio alignment issues during evaluation take processing.
+- **ChatGPT:** Used for conceptual code explanations, parameter tuning ideas, and sanity-checking signal processing math.
+- **Gemini 3.8 Flash (Runtime API):** Integrated directly into DeltaVox's backend (`backend/explainer.py`) as the runtime causal coaching engine to translate verified metric deltas into plain-English feedback.
+*Note: All architecture decisions, signal processing math (semitone cents conversion, z-score energy normalization, DTW constraints), and repository files were reviewed, verified, and tested.*
