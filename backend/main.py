@@ -285,12 +285,18 @@ def _send_auth_email(email: str, purpose: str, token: str) -> None:
     message["To"] = email
     message["Subject"] = subject
     message.set_content(f"Use this link to {action}:\n\n{url}\n\nThe link expires in {expiry}. If you did not request this, you can ignore this message.")
-    with smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT, timeout=10) as server:
+    timeout = 15
+    if int(config.SMTP_PORT) == 465 or (not config.SMTP_STARTTLS and int(config.SMTP_PORT) != 587):
+        server = smtplib.SMTP_SSL(config.SMTP_HOST, config.SMTP_PORT, timeout=timeout)
+    else:
+        server = smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT, timeout=timeout)
+    with server:
         server.ehlo()
-        if config.SMTP_STARTTLS:
+        if config.SMTP_STARTTLS and int(config.SMTP_PORT) != 465:
             server.starttls()
             server.ehlo()
-        server.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
+        if config.SMTP_USERNAME and config.SMTP_PASSWORD:
+            server.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
         server.send_message(message)
 
 
