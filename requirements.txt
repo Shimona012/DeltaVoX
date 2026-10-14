@@ -12,3 +12,4 @@ python-dotenv>=1.0.0
 slowapi>=0.1.9
 pydantic>=2.6.0
 pytest>=8.0.0
+dtw-python
