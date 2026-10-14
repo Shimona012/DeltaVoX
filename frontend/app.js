@@ -1624,11 +1624,12 @@ function setAuthMessage(message, success = false) {
 }
 
 function initEmailFlows() {
-  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-  const verifyToken = params.get('verify_email');
-  const resetToken = params.get('reset_password');
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const searchParams = new URLSearchParams(window.location.search);
+  const verifyToken = hashParams.get('verify_email') || searchParams.get('verify_email');
+  const resetToken = hashParams.get('reset_password') || searchParams.get('reset_password');
   if (!verifyToken && !resetToken) return;
-
+  
   window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
 
   if (verifyToken) {
