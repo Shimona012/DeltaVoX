@@ -271,7 +271,7 @@ def _send_auth_email(email: str, purpose: str, token: str) -> None:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE,
                             detail="Email delivery is not configured. Ask the site administrator to configure SMTP.")
     if purpose == "verify_email":
-        url = f"{config.PUBLIC_BASE_URL}/#verify_email={token}"
+        url = f"{config.PUBLIC_BASE_URL}/verify?token={token}"
         subject = "Verify your DELTAVOX email address"
         action = "verify your email address"
         expiry = "24 hours"
@@ -374,7 +374,11 @@ def resend_verification(body: EmailBody, request: Request):
             log.exception("Verification email resend failed")
     return {"ok": True, "detail": "If verification is needed, a link has been sent to that email."}
 
-
+@app.get("/verify")
+def verify_email_direct(token: str = ""):
+    if not token or not auth.consume_email_verification(token):
+        return RedirectResponse(url=f"{config.PUBLIC_BASE_URL}/?verify_error=1#verify_error=1")
+    return RedirectResponse(url=f"{config.PUBLIC_BASE_URL}/?verified=1#verified=1")
 @app.post("/api/auth/verification/confirm")
 def confirm_verification(body: TokenBody, request: Request):
     auth.verify_csrf(request)
