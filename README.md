@@ -15,7 +15,7 @@ Most speech analysis tools tell you **what** you said: transcripts, grammar, fil
 
 ### Key Features
 - **Voice-Agnostic Pitch:** Raw Hz frequencies are translated to musical semitone cents on a log scale.
-$$\text{Cents} = 1200 \cdot \log_2\left(\frac{f_0}{55\text{ Hz}}\right)$$
+$$\text{Cents} = 1200 \cdot \log_2\left(\frac{f_0}{55\text{ Hz}}\right).$$
 A 5-semitone inflection measures the same regardless of whether you have a deep bass or high soprano voice.
 - **Gain-Invariant Energy:** Root-Mean-Square (RMS) loudness is z-scored per take. Microphone hardware, distance, and recording levels do not count as delivery flaws—only the expressive contour matters.
 - **Dynamic Time Warping (DTW):** Real deliveries never match frame-for-frame. Sakoe–Chiba constrained DTW aligns variations in cadence and speaking speed so the comparison is always word-for-word.
