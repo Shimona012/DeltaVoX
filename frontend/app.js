@@ -1626,10 +1626,26 @@ function setAuthMessage(message, success = false) {
 function initEmailFlows() {
   const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
   const searchParams = new URLSearchParams(window.location.search);
+  const isVerified = hashParams.get('verified') || searchParams.get('verified');
+  const isVerifyError = hashParams.get('verify_error') || searchParams.get('verify_error');
+
+  if (isVerified) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    window.openAuthModal('login');
+    setAuthMessage('Email verified successfully! You can now sign in.', true);
+    return;
+  }
+  if (isVerifyError) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    window.openAuthModal('login');
+    setAuthMessage('This verification link is invalid or expired. Request a new one.');
+    return;
+  }
+
   const verifyToken = hashParams.get('verify_email') || searchParams.get('verify_email');
   const resetToken = hashParams.get('reset_password') || searchParams.get('reset_password');
   if (!verifyToken && !resetToken) return;
-  
+
   window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
 
   if (verifyToken) {
