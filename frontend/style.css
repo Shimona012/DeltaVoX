@@ -1460,19 +1460,21 @@ button {
   visibility: hidden;
   opacity: 0;
   position: absolute;
-  bottom: calc(100% + 8px);
+  top: calc(100% + 10px);
+  bottom: auto;
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--bg-surface-elevated);
   color: var(--text-main);
   border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 8px;
+  padding: 10px 14px;
   font-size: 11px;
-  line-height: 1.45;
-  width: 250px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  z-index: 1000;
+  line-height: 1.5;
+  width: max-content;
+  max-width: min(280px, 80vw);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  z-index: 9999;
   pointer-events: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
   white-space: normal;
@@ -1482,18 +1484,33 @@ button {
 .help-tip .help-text::after {
   content: '';
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   left: 50%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: var(--border-subtle) transparent transparent transparent;
+  border-color: transparent transparent var(--border-subtle) transparent;
 }
 .help-tip:hover .help-text,
 .help-tip:focus .help-text {
   visibility: visible;
   opacity: 1;
-  transform: translateX(-50%) translateY(-2px);
+  transform: translateX(-50%) translateY(2px);
+}
+.dock-header .help-tip .help-text,
+.script-panel-title .help-tip .help-text {
+  left: -10px;
+  transform: none;
+}
+.dock-header .help-tip .help-text::after,
+.script-panel-title .help-tip .help-text::after {
+  left: 18px;
+}
+.dock-header .help-tip:hover .help-text,
+.dock-header .help-tip:focus .help-text,
+.script-panel-title .help-tip:hover .help-text,
+.script-panel-title .help-tip:focus .help-text {
+  transform: translateY(2px);
 }
 
 /* SCRIPT AI GENERATOR ROW */
@@ -1984,8 +2001,8 @@ body { font-size: 14px; line-height: 1.6; }
 .dataset-card, .rubric-card, .security-card, .history-panel {
   border-radius: 16px; border-color: var(--border-subtle); box-shadow: var(--shadow-soft);
 }
-.dock-panel { overflow: hidden; background: var(--bg-surface); }
-.dock-header { min-height: 62px; padding: 16px 20px; background: var(--bg-surface-elevated); }
+.dock-panel { overflow: visible; background: var(--bg-surface); }
+.dock-header { min-height: 62px; padding: 16px 20px; background: var(--bg-surface-elevated); border-top-left-radius: 15px; border-top-right-radius: 15px; }
 .dock-title { font-size: 14px; }
 .dock-pill { padding: 5px 10px; border-radius: 999px; letter-spacing: .04em; }
 .dock-body { padding: 20px; gap: 16px; }
