@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Secrets
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# Local databases and runtime data
+*.sqlite
+*.sqlite3
+*.db
+instance/
+uploads/
+temp/
+tmp/
+logs/
+*.log
+
+# Frontend dependencies and local configuration
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Firebase service-account credentials
+firebase-service-account*.json
+*service-account*.json
+
+# Local account database and SQLite runtime files
+data/*.sqlite3
+data/*.sqlite3-*
+data/*.db
+
+# Archived sample audio
+archive/
+
+# Exclude the unverified MLK audio dataset
+dataset/mlk_dream/

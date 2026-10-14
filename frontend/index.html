@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark-peach">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DELTAVOX — The sound of change</title>
+  <meta name="description" content="DELTAVOX: Contrastive acoustic speech coaching with Dynamic Time Warping and Gemini 3.5 Flash multimodal intelligence. The sound of change.">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button type="button" class="icon-trigger" id="menuToggleBtn" aria-label="Open Navigation Drawer" title="Navigation Menu">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="brand">
+        <span class="brand-title">DELTAVOX</span>
+        <span class="brand-sub"><em>The sound of change</em></span>
+      </div>
+    </div>
+
+    <!-- CENTER TAB PILLS (FLAT MINIMALIST) -->
+    <nav class="nav-center" aria-label="Main Navigation">
+      <button class="nav-item active" data-page="studio">Speech Studio</button>
+      <button class="nav-item" data-page="dataset">Speech Library (Levels L0–L4)</button>
+      <button class="nav-item" data-page="rubric">Coaching Guide &amp; Rubric</button>
+      <button class="nav-item" data-page="history">My Practice Takes</button>
+      <button class="nav-item" data-page="security">Help &amp; Privacy</button>
+    </nav>
+
+    <!-- RIGHT CONTROLS: THEME PICKER & AUTH BADGE -->
+    <div class="nav-right">
+      <div class="theme-select-wrap">
+        <label for="themeSelect" class="sr-only">Theme</label>
+        <select id="themeSelect" class="clean-select theme-selector" title="Select UI Theme">
+          <option value="dark-peach">Theme: Peach &amp; Charcoal</option>
+          <option value="light-peach">Theme: Peach &amp; Light Grey</option>
+          <option value="monochrome">Theme: High-Contrast Mono</option>
+          <option value="cyber-slate">Theme: Cyber Slate</option>
+          <option value="electric-cyan">Theme: Electric Cyan</option>
+          <option value="neon-green">Theme: Neon Green</option>
+        </select>
+      </div>
+
+      <div id="authHeaderWidget" class="auth-widget">
+        <!-- Rendered dynamically via JS -->
+        <button class="btn-subtle" id="navLoginBtn">Log In</button>
+        <button class="btn-prime" id="navSignupBtn">Sign Up</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- SLIDE-OUT DRAWER (3 LINES MENU) -->
+  <div id="drawerOverlay" class="drawer-overlay hidden"></div>
+  <aside id="sideDrawer" class="side-drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-brand">DELTAVOX</div>
+      <button type="button" class="drawer-close" id="drawerCloseBtn" aria-label="Close menu">&times;</button>
+    </div>
+
+    <div class="drawer-user-info" id="drawerUserCard">
+      <span class="user-status-dot"></span>
+      <span class="user-name-display" id="drawerUserName">Guest Speaker</span>
+    </div>
+
+    <div class="drawer-section-title">Navigation Views</div>
+    <ul class="drawer-menu">
+      <li><button class="drawer-link active" data-page="studio">01. Studio &amp; Evaluator</button></li>
+      <li><button class="drawer-link" data-page="dataset">02. Speech Library &amp; Benchmarks</button></li>
+      <li><button class="drawer-link" data-page="rubric">03. Speaking Scoring Guide</button></li>
+      <li><button class="drawer-link" data-page="history">04. Saved Practice Takes</button></li>
+      <li><button class="drawer-link" data-page="security">05. Privacy &amp; Data Protection</button></li>
+    </ul>
+
+    <div class="drawer-section-title">Account &amp; Session</div>
+    <div class="drawer-actions" id="drawerAuthActions">
+      <button class="btn-clean" id="drawerLoginBtn">Sign In</button>
+      <button class="btn-clean" id="drawerSignupBtn">Create Account</button>
+    </div>
+
+    <div class="drawer-footer">
+      <div>AI Speech Contrastive Platform</div>
+      <div>Zero Audio Kept on Disk &bull; Encrypted Privacy</div>
+    </div>
+  </aside>
+
+  <!-- MAIN APPLICATION CONTENT VIEWS -->
+  <main class="app-viewport">
+
+    <!-- ==================== VIEW 1: STUDIO (EVALUATOR) ==================== -->
+    <section id="view-studio" class="page-view active">
+      <!-- HERO STRIP -->
+      <div class="studio-intro-bar">
+        <div class="intro-text">
+          <h1>Speech Evaluator &amp; Studio</h1>
+          <p>Compare a reference speech with your take and get focused delivery feedback.</p>
+        </div>
+        <div class="intro-actions">
+          <button type="button" class="btn-demo-pill" id="oneClickCivicDemo"><span class="demo-icon">▶</span> Try Demo: Civic Keynote (Egregious Flaw)</button>
+          <button type="button" class="btn-demo-pill" id="oneClickCivicMinorDemo"><span class="demo-icon">▶</span> Try Demo: Civic Keynote (Minor Flaw)</button>
+        </div>
+      </div>
+
+
+      <!-- WORKBENCH 2-COLUMN CONTINUOUS WORKSPACE -->
+      <div class="canvas-grid">
+        <!-- LEFT: TARGET BASELINE (DOCK A) -->
+        <div class="dock-panel">
+          <div class="dock-header">
+            <span class="dock-title">
+              Target Reference Model
+              <span class="help-tip" tabindex="0">
+                <span class="help-icon">?</span>
+                <span class="help-text">Choose a benchmark speech or upload your own reference audio.</span>
+              </span>
+            </span>
+            <span class="dock-pill">Reference Speech</span>
+          </div>
+          <div class="dock-body">
+            <div class="tab-pill-row">
+              <button class="tab-pill active" id="tabRefPreset" type="button">Benchmark Speech</button>
+              <button class="tab-pill" id="tabRefUpload" type="button">Upload Audio</button>
+            </div>
+
+            <!-- PRESET SELECT -->
+            <div id="boxRefPreset">
+              <label class="input-label" for="refPresetSelect">Select Gold-Standard Speech</label>
+              <select id="refPresetSelect" class="clean-select">
+                <option value="dataset/speech_001_persuasive/level_0_ideal.wav">Civic Oratory Benchmark — "Civic Action" (Synthetic Gold)</option>
+              </select>
+            </div>
+
+            <!-- UPLOAD -->
+            <div id="boxRefUpload" class="hidden">
+              <label class="input-label" for="refFileInput">Upload Reference Audio (WAV, MP3, OGG, M4A, FLAC)</label>
+              <input type="file" id="refFileInput" accept="audio/*" class="clean-file-input">
+            </div>
+
+            <!-- BENCHMARK PROFILE INFO (COLLAPSIBLE PLUS-BOX) -->
+            <details id="dockABenchmarkInfo" class="benchmark-info-accordion">
+              <summary class="benchmark-accordion-trigger">
+                <span class="benchmark-tag">
+                  <span class="plus-icon">+</span>
+                  Target Benchmark Profile
+                </span>
+                <span class="benchmark-f0" id="dockABenchmarkF0">Mean Pitch: ~128 Hz &bull; Pace: 3.4 syl/sec</span>
+              </summary>
+              <div class="benchmark-accordion-content">
+                <p class="benchmark-desc" id="dockABenchmarkDesc">Contemporary civic keynote delivery with dynamic modal projection, steady 3.4 syllables/second cadence, and clean declarative clause articulation.</p>
+              </div>
+            </details>
+
+            <!-- AUDIO PLAYER -->
+            <div class="dock-audio-row">
+              <audio id="refPlayer" controls src="/dataset/speech_001_persuasive/level_0_ideal.wav" preload="metadata"></audio>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: EVALUATION TAKE (DOCK B) -->
+        <div class="dock-panel">
+          <div class="dock-header">
+            <span class="dock-title">
+              Your Speaking Take
+              <span class="help-tip" tabindex="0">
+                <span class="help-icon">?</span>
+                <span class="help-text">Use a sample, record with your microphone, or upload a take.</span>
+              </span>
+            </span>
+            <span class="dock-pill">Your Voice</span>
+          </div>
+          <div class="dock-body">
+            <div class="tab-pill-row">
+              <button class="tab-pill active" id="tabEvalSpectrum" type="button">Benchmark Takes</button>
+              <button class="tab-pill" id="tabEvalMic" type="button">Live Microphone</button>
+              <button class="tab-pill" id="tabEvalUpload" type="button">Upload Audio</button>
+            </div>
+
+            <!-- SPECTRUM TEST PRESETS (DEFAULT ACTIVE) -->
+            <div id="boxEvalSpectrum">
+              <label class="input-label" for="evalSpectrumSelect">Select Practice Take</label>
+              <select id="evalSpectrumSelect" class="clean-select">
+                <option value="dataset/speech_001_persuasive/level_3_moderate.wav">Civic Speech &mdash; Take 3: Moderate Cadence Fade</option>
+                <option value="dataset/speech_001_persuasive/level_1_subtle.wav">Civic Speech &mdash; Take 1: Subtle Pacing Drift</option>
+                <option value="dataset/speech_001_persuasive/level_2_minor.wav">Civic Speech &mdash; Take 2: Minor Compression</option>
+                <option value="dataset/speech_001_persuasive/level_0_ideal.wav">Civic Speech &mdash; Take 0: Benchmark Aligned Delivery</option>
+                <option value="dataset/speech_001_persuasive/level_4_egregious.wav">Civic Speech &mdash; Take 4: Severe Monotone Delivery</option>
+              </select>
+            </div>
+
+            <!-- RECORDING BOX (OPTIONAL / ON-DEMAND) -->
+            <div id="boxEvalMic" class="mic-container hidden">
+              <div class="mic-controls">
+                <button type="button" id="micRecordBtn" class="mic-toggle-btn">
+                  <span class="mic-dot" id="micDot"></span>
+                  <span id="micBtnText">Record Audio</span>
+                </button>
+                <span class="timer-display" id="recTimer">00:00.0</span>
+              </div>
+              <div class="audio-meter">
+                <div class="audio-meter-bar" id="micMeterBar"></div>
+              </div>
+              <p class="hint-caption">Microphone audio is processed entirely in volatile memory for acoustic analysis and permanently discarded immediately afterwards.</p>
+            </div>
+
+            <!-- UPLOAD FILE -->
+            <div id="boxEvalUpload" class="hidden">
+              <label class="input-label" for="evalFileInput">Upload Audio Take (Max 25MB)</label>
+              <input type="file" id="evalFileInput" accept="audio/*" class="clean-file-input">
+            </div>
+
+            <!-- AUDIO PLAYER -->
+            <div class="dock-audio-row">
+              <audio id="evalPlayer" controls preload="metadata"></audio>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTIONAL TARGET SCRIPT & SPEECH TEXT & AI GENERATOR -->
+      <div class="script-input-panel">
+        <div class="script-panel-header">
+          <div>
+            <span class="script-panel-title">
+              Prepared Speech Script &amp; Topic
+              <span class="help-tip" tabindex="0">
+                <span class="help-icon">?</span>
+                <span class="help-text">Type what you plan to say, load a classic speech, or generate a custom practice script on any topic (e.g. "Space exploration" or "Dinosaurs"). The AI compares what was actually heard against this script to detect stumbles and fumbles.</span>
+              </span>
+            </span>
+            <p class="script-panel-sub">Compare your spoken take with a prepared script.</p>
+          </div>
+          <div class="script-quick-actions">
+            <span id="scriptBadge" class="script-badge">No script loaded</span>
+            <button type="button" class="btn-subtle" id="loadScriptCivicBtn"><span class="btn-icon">🏛️</span> Civic Speech</button>
+            <button type="button" class="btn-subtle" id="clearScriptBtn"><span class="btn-icon">✕</span> Clear</button>
+          </div>
+        </div>
+
+        <textarea id="targetScriptInput" class="clean-textarea" rows="7" placeholder="Type or paste what you plan to say, or generate a script below to measure word accuracy, fumbles, and pace..."></textarea>
+
+        <!-- AI SPEECH SCRIPT GENERATOR & SCRIPT VERIFICATION ROW -->
+        <div class="script-ai-row">
+          <input type="text" id="scriptTopicInput" class="script-topic-input" placeholder="Enter any topic (e.g. Dinosaurs, Climate Action, Artificial Intelligence, Innovation)..." maxlength="150">
+          <label class="script-option">Length
+            <select id="scriptDurationSelect" class="clean-select" aria-label="Target script duration">
+              <option value="30">30 seconds</option><option value="60" selected>1 minute</option>
+              <option value="120">2 minutes</option><option value="180">3 minutes</option>
+            </select>
+          </label>
+          <label class="script-option">Speaking pace
+            <select id="scriptPaceSelect" class="clean-select" aria-label="Target speaking pace">
+              <option value="100">Slow and clear</option><option value="130" selected>Natural</option>
+              <option value="160">Energetic</option>
+            </select>
+          </label>
+          <button type="button" id="generateScriptBtn" class="btn-generate-ai">
+            <span>✨ Generate Practice Script</span>
+          </button>
+          <button type="button" id="verifyScriptBtn" class="btn-verify-ai">
+            <span>🎯 Verify Delivery with Script</span>
+          </button>
+        </div>
+        <p class="script-generator-note" id="scriptGeneratorNote">English by default. Script language follows Feedback Language. Target: about 130 words.</p>
+      </div>
+
+      <!-- RHETORICAL INTENT & EXECUTION BAR -->
+      <div class="orchestration-bar">
+        <div class="context-group">
+          <label class="group-label" for="intentSelect">
+            Speaking Style
+            <span class="help-tip" tabindex="0">
+              <span class="help-icon">?</span>
+              <span class="help-text">Adjusts the evaluation expectations. For example, dramatic speeches allow longer silences, whereas debate speeches expect rapid, energetic delivery.</span>
+            </span>
+          </label>
+          <select id="intentSelect" class="clean-select auto-width">
+            <option value="persuasive_oratory">Persuasive Keynote (Standard Cadence)</option>
+            <option value="informative_lecture">Educational Lecture (Clear Articulation)</option>
+            <option value="storytelling">Storytelling &amp; Narrative (Expressive Pitch)</option>
+            <option value="dramatic_declamation">Dramatic Declamation (Allows Pauses up to 3.0s)</option>
+            <option value="debate_rebuttal">Debate Rebuttal (Rapid Cadence &lt; 1.6s Pause)</option>
+          </select>
+        </div>
+
+        <div class="context-group">
+          <label class="group-label" for="accentSelect">Speaker Accent</label>
+          <select id="accentSelect" class="clean-select auto-width">
+            <option value="general_american">General American</option>
+            <option value="british_rp">British (RP / Standard)</option>
+            <option value="indian_english">Indian English</option>
+            <option value="australian_nz">Australian &amp; NZ</option>
+            <option value="global_esl">Global / International (ESL)</option>
+            <option value="singaporean_sea">Southeast Asian</option>
+            <option value="regional_accent">Regional / Colloquial</option>
+          </select>
+        </div>
+
+        <div class="context-group">
+          <label class="group-label" for="languageSelect">Feedback Language</label>
+          <select id="languageSelect" class="clean-select auto-width">
+            <option value="English">English</option>
+            <option value="Hindi">Hindi (हिंदी)</option>
+            <option value="Gujarati">Gujarati (ગુજરાતી)</option>
+            <option value="Spanish">Spanish (Español)</option>
+            <option value="French">French (Français)</option>
+            <option value="German">German (Deutsch)</option>
+            <option value="Japanese">Japanese (日本語)</option>
+            <option value="Mandarin">Mandarin (中文)</option>
+            <option value="Arabic">Arabic (العربية)</option>
+            <option value="Portuguese">Portuguese (Português)</option>
+            <option value="Italian">Italian (Italiano)</option>
+            <option value="Dutch">Dutch (Nederlands)</option>
+            <option value="Bengali">Bengali (বাংলা)</option>
+            <option value="Tamil">Tamil (தமிழ்)</option>
+            <option value="Telugu">Telugu (తెలుగు)</option>
+            <option value="Russian">Russian (Русский)</option>
+            <option value="Korean">Korean (한국어)</option>
+          </select>
+        </div>
+
+        <button type="button" id="executeEvalBtn" class="btn-execute">
+          Evaluate My Speech Delivery &rarr;
+        </button>
+      </div>
+
+
+      <!-- BUSY / SPINNER OVERLAY -->
+      <div id="execSpinner" class="processing-banner hidden" aria-live="polite">
+        <div class="spinner-ring"></div>
+        <div class="spinner-content">
+          <div class="spinner-status-top">
+            <strong id="execStatusTitle">Analyzing Speech Delivery...</strong>
+            <span id="execStatusStep">Measuring pitch movement and speech rhythm against benchmark...</span>
+          </div>
+          <div class="processing-progress-track">
+            <div class="processing-progress-bar" id="execProgressBar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADJUDICATION RESULTS DASHBOARD -->
+      <section id="resultsSection" class="results-dashboard hidden" aria-live="polite">
+        <!-- SCORE & INTEGRITY BANNER -->
+        <div class="score-banner">
+          <div class="score-monolith">
+            <span class="score-caption">
+              Overall Delivery Score
+              <span class="help-tip" tabindex="0">
+                <span class="help-icon">?</span>
+                <span class="help-text">A composite score from 0 to 100 measuring how closely your melody, vocal energy, rhythm, and pauses align with high-impact speaking benchmarks.</span>
+              </span>
+            </span>
+            <div class="score-number" id="scoreOverall">&mdash;</div>
+            <div class="score-verdict" id="scoreVerdict">Evaluation Complete</div>
+          </div>
+
+          <div class="rubric-bars-panel">
+            <div class="rubric-header">
+              Speech Quality Dimensions
+              <span class="help-tip" tabindex="0">
+                <span class="help-icon">?</span>
+                <span class="help-text">Breaks down your delivery across Pitch Melody, Vocal Energy, Speaking Rhythm, and Pauses.</span>
+              </span>
+            </div>
+            <div class="rubric-meters" id="rubricMeters">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="provenance-panel" style="font-size: 11px;">
+            <div class="provenance-title">
+              Official Verification
+              <span class="help-tip" tabindex="0">
+                <span class="help-icon">?</span>
+                <span class="help-text">A unique mathematical security fingerprint proving that your speech evaluation was genuinely calculated and has never been altered.</span>
+              </span>
+            </div>
+            <div class="sha-box">
+              <span class="sha-label">Certificate Fingerprint:</span>
+              <code class="sha-code" id="provenanceSha" style="font-size: 10px;">&mdash;</code>
+            </div>
+            <p class="provenance-note" id="provenanceMeaning" style="font-size: 11px; margin-top: 4px;">
+              Digital certificate verifying the authentic, unaltered calculation of your score.
+            </p>
+          </div>
+        </div>
+
+        <!-- CONTOUR & FLUTTER CHART CANVAS -->
+        <div class="chart-panel">
+          <div class="chart-header">
+            <div>
+              <span class="chart-title">
+                Voice Melody &amp; Pitch Curve
+                <span class="help-tip" tabindex="0">
+                  <span class="help-icon">?</span>
+                  <span class="help-text">Vocal pitch reflects the high and low musical notes of your voice. Expressive speakers vary their pitch dynamically instead of staying on a single flat note. Click anywhere on this graph to listen to that exact second of your take!</span>
+                </span>
+              </span>
+              <p class="chart-explain">Dotted line is the benchmark speaker; solid colored line is your voice. Click anywhere on the curve to jump playback to that moment.</p>
+            </div>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="pitchCanvas" height="240"></canvas>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="dot-ref"></span> Reference Speaker (Baseline)</span>
+            <span class="legend-item"><span class="dot-eval"></span> Your Voice Take</span>
+          </div>
+        </div>
+
+        <!-- SCRIPT VS SPOKEN CONTENT & FUMBLE ANALYSIS (WHEN SCRIPT PROVIDED) -->
+        <div id="scriptCompPanel" class="script-comp-panel hidden">
+          <div class="panel-heading">
+            <span>Script vs Spoken Delivery Comparison</span>
+            <span class="delivery-verdict-pill" id="scriptVerdictBadge">Comparable Delivery</span>
+          </div>
+          <div class="script-comp-body">
+            <div class="script-stats-strip">
+              <div class="stat-box">
+                <span class="stat-label">Word Match</span>
+                <strong class="stat-val" id="scriptAdherenceVal">&mdash;</strong>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">Fumbles / Stumbles</span>
+                <strong class="stat-val" id="scriptFumbleVal">0</strong>
+              </div>
+              <div class="stat-box wide">
+                <span class="stat-label">Delivery Comparison</span>
+                <span class="stat-text" id="scriptHeadlineVal">&mdash;</span>
+              </div>
+            </div>
+
+            <!-- COMPARISON SCRIPT DIFF DISPLAY -->
+            <div class="script-diff-grid">
+              <div class="script-diff-col">
+                <div class="diff-col-title">Prepared Target Script</div>
+                <div class="script-text-box" id="scriptTargetDisplay"></div>
+              </div>
+              <div class="script-diff-col">
+                <div class="diff-col-title">What Was Actually Heard (Transcribed)</div>
+                <div class="script-text-box heard" id="scriptHeardDisplay"></div>
+              </div>
+            </div>
+
+            <!-- FUMBLES / STUMBLES LIST -->
+            <div id="scriptFumblesContainer" class="script-fumbles-wrap hidden">
+              <div class="sub-heading">Detected Fumbles &amp; Hesitations</div>
+              <div class="fumble-cards" id="fumbleCardsList"></div>
+            </div>
+
+            <!-- ACTIONABLE DELIVERY SUGGESTIONS -->
+            <div class="script-suggestions-wrap">
+              <div class="sub-heading">Suggestions to Elevate This Script Delivery</div>
+              <ul class="suggestions-list" id="scriptSuggestionsList"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOP CAUSAL REPAIR ACTIONS -->
+        <div class="repair-panel">
+
+          <div class="panel-heading">
+            <span>High-Priority Coaching Tips</span>
+            <span class="flaw-count-badge" id="flawCountBadge">0 Detected</span>
+          </div>
+          <div class="repair-cards" id="repairCardsContainer">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- TEMPORAL FLAW GROUNDING LIST -->
+        <div class="flaws-panel">
+          <div class="panel-heading">
+            <span>Moments for Improvement</span>
+            <span class="sub-hint">Click any moment to hear the audio at that exact second</span>
+          </div>
+          <div class="flaws-list" id="flawsListContainer">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+      </section>
+    </section>
+
+    <!-- ==================== VIEW 2: DATASET EXPLORER ==================== -->
+    <section id="view-dataset" class="page-view">
+      <div class="page-header">
+        <h2>Contrastive Speech Dataset (Gradient Spectrum L0&ndash;L4)</h2>
+        <p>A structured benchmark gradient created for multimodal speech adjudication: Level 0 (ideal baseline) to Level 4 (egregious delivery breakdowns).</p>
+      </div>
+
+      <div class="dataset-grid" id="datasetCardsContainer">
+        <!-- Loaded via /api/presets -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: RUBRIC GUIDE ==================== -->
+    <section id="view-rubric" class="page-view">
+      <div class="page-header">
+        <h2>Speech Delivery Rubric &amp; Coaching Guide</h2>
+        <p>The four core vocal dimensions we evaluate to help you become a compelling, expressive speaker.</p>
+      </div>
+
+      <div class="rubric-doc-grid">
+        <div class="rubric-doc-card">
+          <h3>1. Pitch Expressiveness &amp; Melody (35%)</h3>
+          <p><strong>What we listen for:</strong> How naturally your voice rises and falls across phrases to emphasize key thoughts and keep listeners captivated.</p>
+          <p><strong>Common stumbling block:</strong> Speaking on a flat, single tone (monotone) without natural vocal melody.</p>
+        </div>
+
+        <div class="rubric-doc-card">
+          <h3>2. Vocal Projection &amp; Energy (25%)</h3>
+          <p><strong>What we listen for:</strong> Steady, confident voice volume throughout whole sentences, ensuring your last words carry just as clearly as your first.</p>
+          <p><strong>Common stumbling block:</strong> Trailing off or losing breath and energy toward the end of important statements.</p>
+        </div>
+
+        <div class="rubric-doc-card">
+          <h3>3. Speaking Rhythm &amp; Tempo (25%)</h3>
+          <p><strong>What we listen for:</strong> A consistent, comfortable pace that allows the audience to follow your thoughts easily without feeling rushed.</p>
+          <p><strong>Common stumbling block:</strong> Articulating words too quickly or stumbling when transitioning between ideas.</p>
+        </div>
+
+        <div class="rubric-doc-card">
+          <h3>4. Purposeful Pauses &amp; Breathing (15%)</h3>
+          <p><strong>What we listen for:</strong> Intentional silences that let big points land with impact and give your delivery breathing room.</p>
+          <p><strong>Common stumbling block:</strong> Stalling mid-sentence or trailing into prolonged, hesitant dead silence.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: HISTORY ==================== -->
+    <section id="view-history" class="page-view">
+      <div class="page-header">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2>Saved Takes &amp; Progress History</h2>
+            <p>Your speech evaluations and performance scores over time.</p>
+          </div>
+          <div>
+            <button class="btn-subtle" id="clearHistoryBtn" type="button">Clear Local Takes</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="historyAuthNotice" class="info-callout">
+        <span>Currently recording in Guest Mode. Your takes are saved locally in this browser. Create an account to sync progress across all your devices.</span>
+        <button class="btn-subtle" id="historyLoginBtn">Sign In / Sign Up</button>
+      </div>
+
+      <div class="history-table-wrap" id="historyTableWrap">
+        <table class="clean-table" id="historyTable">
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>Take Title / Topic</th>
+              <th>Reference Speech</th>
+              <th>Your Voice Take</th>
+              <th>Areas Noted</th>
+              <th>Overall Score</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <tr>
+              <td colspan="7" class="table-empty">No evaluations recorded in current session.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 5: HELP, PRIVACY & TERMS ==================== -->
+    <section id="view-security" class="page-view">
+      <div class="page-header">
+        <h2>Help Center, Privacy &amp; Terms of Service</h2>
+        <p>Complete guide on using the studio, changing languages, troubleshooting takes, and how we safeguard your data.</p>
+      </div>
+
+      <!-- HELP & HOW-TO GUIDE -->
+      <div class="rubric-doc-card" style="margin-bottom: 20px;">
+        <h3>🎙️ How to Use SpeechContrastive Engine</h3>
+        <ol style="padding-left: 20px; line-height: 1.8; font-size: 13px; color: var(--text-muted); margin-top: 10px;">
+          <li><strong>Step 1 (Dock A — Target Benchmark):</strong> Select a reference speech (e.g. Civic Oratory Benchmark) or upload your own reference file. Click the <span style="color:var(--accent-peach);">[+] Target Benchmark Profile</span> to view vocal stats (pitch, cadence, pace).</li>
+          <li><strong>Step 2 (Dock B — Your Voice Take):</strong> Practice using one of the pre-recorded benchmark take levels (L0 to L4), record your voice live using your microphone, or upload any audio file.</li>
+          <li><strong>Step 3 (Prepared Script &amp; Topic):</strong> Optionally type what you planned to say, click <em>Civic Speech</em>, or enter any topic (e.g. <em>"Dinosaurs"</em>) and click <span style="color:var(--accent-peach);">✨ Generate Practice Script</span>. The AI will compare what you actually said against your script to find stumbles and fumbles!</li>
+          <li><strong>Step 4 (Language &amp; Accent):</strong> Choose your <strong>Speaking Style</strong>, <strong>Speaker Accent</strong> (General American, British, Indian English, etc.), and <strong>Feedback Language</strong> (English, Hindi, Gujarati, Spanish, French, German, Japanese, etc.).</li>
+          <li><strong>Step 5 (Evaluate):</strong> Click <strong style="color:var(--accent-green);">Evaluate My Speech Delivery</strong>. View your overall score, melody pitch curve, top coaching tips, detected stumbles, and word adherence percentage!</li>
+        </ol>
+      </div>
+
+      <!-- FAQ & TROUBLESHOOTING -->
+      <div class="rubric-doc-card" style="margin-bottom: 20px;">
+        <h3>❓ Frequently Asked Questions (FAQ)</h3>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px; font-size: 13px; color: var(--text-muted);">
+          <div>
+            <strong style="color: var(--text-main);">Q: Where do I change the feedback language and speaking style?</strong>
+            <p style="margin: 2px 0 0 0;">In the <strong>Speech Studio</strong> right above the green "Evaluate" button, use the <em>Speaking Style</em>, <em>Speaker Accent</em>, and <em>Feedback Language</em> dropdowns.</p>
+          </div>
+          <div>
+            <strong style="color: var(--text-main);">Q: What are the levels L0 through L4 in the Speech Library?</strong>
+            <p style="margin: 2px 0 0 0;"><strong>Level 0</strong> is the gold-standard benchmark. <strong>Level 1</strong> has subtle pacing drift, <strong>Level 2</strong> minor compression, <strong>Level 3</strong> moderate energy fade, and <strong>Level 4</strong> severe flat monotone or hesitation stalls.</p>
+          </div>
+          <div>
+            <strong style="color: var(--text-main);">Q: Is my voice recording saved on any server?</strong>
+            <p style="margin: 2px 0 0 0;"><strong>No. Zero audio is stored.</strong> Speech recordings are held only in volatile memory for feature extraction and immediately destroyed.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="security-grid">
+        <div class="sec-card">
+          <h3>Voice Audio Never Stored</h3>
+          <p>Your microphone takes and uploaded audio files are analyzed in temporary memory and permanently deleted as soon as your feedback is generated. We never keep or sell vocal recordings.</p>
+        </div>
+
+        <div class="sec-card">
+          <h3>Encrypted Password Protection</h3>
+          <p>Account passwords are protected with modern, heavy multi-round cryptographic hashing. Even system operators cannot read or retrieve your password.</p>
+        </div>
+
+        <div class="sec-card">
+          <h3>Secure Browser Sessions</h3>
+          <p>Sign-in cookies are strictly protected and isolated to this application, shielding your saved progress against unauthorized cross-site access.</p>
+        </div>
+
+        <div class="sec-card">
+          <h3>Tamper-Proof Verification</h3>
+          <p>Every evaluation includes a unique digital checksum verifying that your score was genuinely calculated and has not been altered.</p>
+        </div>
+
+        <div class="sec-card">
+          <h3>Fair Use &amp; Abuse Protection</h3>
+          <p>Automated request limits protect the platform from bot overload and denial-of-service spam, keeping evaluations fast and responsive for everyone.</p>
+        </div>
+
+        <div class="sec-card">
+          <h3>Zero Advertising or Tracking</h3>
+          <p>We do not include third-party marketing trackers, analytics cookies, or behavioral advertising scripts.</p>
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+
+  <!-- AUTHENTICATION MODAL (SIGN UP / LOG IN) -->
+  <div id="authModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">Sign In</h3>
+        <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button type="button" class="modal-tab active" id="tabModeLogin">Log In</button>
+        <button type="button" class="modal-tab" id="tabModeSignup">Create Account</button>
+      </div>
+
+      <form id="authForm" class="modal-form" novalidate>
+        <div class="form-group hidden" id="fieldDisplayName">
+          <label class="form-label" for="authDisplayName">Display Name</label>
+          <input type="text" id="authDisplayName" class="form-input" placeholder="Speaker Name" maxlength="40">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="authEmail">Email Address</label>
+          <input type="email" id="authEmail" class="form-input" placeholder="speaker@domain.com" required maxlength="254">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="authPassword">Password</label>
+          <input type="password" id="authPassword" class="form-input" placeholder="At least 8 characters (e.g. SpeechPro2026!)" required minlength="8" maxlength="128">
+        </div>
+
+        <div id="authForgotRow" style="text-align: right; margin-top: -6px;">
+          <a href="#" id="authForgotBtn" class="inline-link" style="font-size: 11px;">Forgot password?</a>
+        </div>
+
+        <div id="boxResetPassword" class="reset-password-box hidden">
+          <strong>Reset your password</strong>
+          <p id="resetPasswordHelp">We’ll email you a secure, one-time link.</p>
+          <div id="resetRequestFields">
+            <button type="button" id="sendResetLinkBtn" class="btn-subtle">Send reset link</button>
+          </div>
+          <div id="resetApplyFields" class="hidden">
+            <label class="form-label" for="authNewPassword">New password</label>
+            <input type="password" id="authNewPassword" class="form-input" placeholder="At least 8 characters" minlength="8" maxlength="128" autocomplete="new-password">
+            <button type="button" id="confirmResetBtn" class="btn-subtle">Save new password</button>
+          </div>
+        </div>
+
+        <div class="form-group hidden" id="fieldTerms">
+          <label class="checkbox-label">
+            <input type="checkbox" id="authAcceptTerms" checked>
+            <span>I accept the <a href="#" id="authTermsLink" class="inline-link">Terms of Use</a> and <a href="#" id="authPrivacyLink" class="inline-link">Privacy Notice</a> for speech evaluation.</span>
+          </label>
+        </div>
+
+        <div id="authErrorMsg" class="form-error hidden"></div>
+        <button type="button" id="resendVerificationBtn" class="btn-subtle hidden">Resend verification email</button>
+
+        <div class="form-actions">
+          <button type="submit" id="authSubmitBtn" class="btn-execute">Sign In</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- TERMS OF SERVICE MODAL -->
+  <div id="termsModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle">
+    <div class="modal-card terms-modal-card">
+      <div class="modal-header">
+        <h3 id="termsModalTitle">Terms of Service</h3>
+        <button type="button" class="modal-close-btn" id="termsModalCloseBtn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="terms-modal-body">
+        <h4>1. Platform Usage &amp; Research License</h4>
+        <p>Speech Contrastive Engine is an automated vocal feedback platform designed for educational coaching, rhetorical analysis, and vocal training. You agree not to submit unlawful, harmful, or abusive content.</p>
+
+        <h4>2. Objective Acoustic Feedback</h4>
+        <p>Acoustic metrics and rubric scores are contrastive mathematical estimates computed via Dynamic Time Warping and spectral cadence. They do not constitute diagnostic medical advice for speech pathologies or vocal cord disorders.</p>
+
+        <h4>3. Digital Provenance &amp; Verification</h4>
+        <p>Each evaluation generates a deterministic digital checksum verifying the authentic, unaltered calculation of your score.</p>
+
+        <h4>4. Modifications &amp; Service Availability</h4>
+        <p>We may periodically update coaching algorithms and acoustic reference baselines to improve delivery feedback accuracy.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-prime" id="termsModalCloseBtn2">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVACY POLICY MODAL -->
+  <div id="privacyModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+    <div class="modal-card terms-modal-card">
+      <div class="modal-header">
+        <h3 id="privacyModalTitle">Privacy Policy &amp; Data Rights</h3>
+        <button type="button" class="modal-close-btn" id="privacyModalCloseBtn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="terms-modal-body">
+        <h4>1. Zero Voice Storage Guarantee</h4>
+        <p>We do not store your microphone recordings or uploaded audio on server disks. Audio is converted to numerical feature frames in volatile RAM and immediately discarded once analysis is complete.</p>
+
+        <h4>2. Cryptographic Security</h4>
+        <p>Account credentials and session tokens are protected with PBKDF2 cryptographic hashing. Passwords are never stored in plain text or accessible to staff.</p>
+
+        <h4>3. No Third-Party Tracking or Ads</h4>
+        <p>We do not sell user data, track you across the web, or embed advertising trackers or analytics cookies.</p>
+
+        <h4>4. Contact Us Messages</h4>
+        <p>If you submit a Contact Us request, the name, optional reply email, category, message, and timestamp are stored in the project owner’s Firebase Firestore inbox until the owner removes them. Contact messages are not emailed.</p>
+
+        <h4>5. Right to Delete Your Data</h4>
+        <p>You can delete any saved takes or purge your entire account at any time with one click from the user drawer.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-prime" id="privacyModalDoneBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT US MODAL -->
+  <div id="aboutModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
+    <div class="modal-card terms-modal-card">
+      <div class="modal-header">
+        <h3 id="aboutModalTitle">About SpeechContrastive AI</h3>
+        <button type="button" class="modal-close-btn" id="aboutModalCloseBtn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="terms-modal-body">
+        <!-- HACKATHON TRACK CALLOUT -->
+        <div class="track-highlight-card">
+          <div class="track-badge">🏆 HACKATHON TRACK</div>
+          <div class="track-title">AI Speech &amp; Audio / Gemini Multimodal Intelligence</div>
+          <p class="track-sub">Built to turn subjective orator feedback into deterministic, millisecond-aligned acoustic guidance using Gemini 3.5 Flash and Dynamic Time Warping.</p>
+        </div>
+
+        <h4>Our Mission &amp; Approach</h4>
+        <p>SpeechContrastive Engine bridges the gap between raw transcription and rhetorical delivery. Rather than merely grading your grammar, our engine aligns your vocal pitch contour, pause rhythm, and energy envelope directly against gold-standard rhetorical and civic oratory benchmarks.</p>
+
+        <h4>Core Acoustic Architecture</h4>
+        <p>&bull; <strong>Dynamic Time Warping (DTW):</strong> Time-aligns non-linear vocal speeds across spoken sentences.<br>
+           &bull; <strong>Syllable Nuclei Detection:</strong> Calculates cadence, pause structure, and rushing rhythm.<br>
+           &bull; <strong>Multilingual Gemini Multimodal:</strong> Verbatim phoneme transcription and multi-accent rhetorical coaching.<br>
+           &bull; <strong>Zero-Persistence Privacy:</strong> Vocal takes exist solely in temporary volatile RAM.</p>
+
+        <h4>Project &amp; Team Details</h4>
+        <p>Created by the Speech Contrastive Engineering Team for the AI Hackathon. Dedicated to open, privacy-first vocal mastery.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-prime" id="aboutModalDoneBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT PROJECT TEAM MODAL (ZERO EMAIL DISCLOSED) -->
+  <div id="contactModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
+    <div class="modal-card terms-modal-card">
+      <div class="modal-header">
+        <h3 id="contactModalTitle">Contact Project Team</h3>
+        <button type="button" class="modal-close-btn" id="contactModalCloseBtn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="terms-modal-body">
+        <p style="margin-bottom: 12px; font-size: 13px; color: var(--text-muted);">Choose whether to send anonymously or include an email so the project team can reply. Messages are stored in Firebase Firestore.</p>
+
+        <form id="contactDirectForm" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 10px;">
+          <fieldset class="contact-reply-options">
+            <legend>How should we handle your message?</legend>
+            <label><input type="radio" name="contactReplyMode" value="anonymous" checked> Send anonymously</label>
+            <label><input type="radio" name="contactReplyMode" value="reply"> Include an email for a reply</label>
+          </fieldset>
+          <div class="form-group hidden" id="contactReplyFields" hidden>
+            <label class="form-label" for="contactSenderName">Name (optional)</label>
+            <input type="text" id="contactSenderName" class="form-input" placeholder="Your name" maxlength="60" autocomplete="name">
+            <label class="form-label" for="contactSenderEmail">Email for a reply</label>
+            <input type="email" id="contactSenderEmail" class="form-input" placeholder="you@example.com" maxlength="254" autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contactCategorySelect">Topic / Inquiry Category</label>
+            <select id="contactCategorySelect" class="clean-select" style="width: 100%;">
+              <option value="hackathon">Hackathon Review &amp; Feedback</option>
+              <option value="speech_engine">Acoustic Engine &amp; Pitch Alignment</option>
+              <option value="feature">Feature Request or Language Suggestion</option>
+              <option value="general">General Message to Developer Team</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contactDirectMessage">Your Message</label>
+            <textarea id="contactDirectMessage" class="clean-textarea" rows="3" placeholder="Write your message here..." required maxlength="1000"></textarea>
+          </div>
+
+          <div id="contactStatusBox" class="contact-status hidden" role="status" aria-live="polite"></div>
+
+          <button type="button" class="btn-prime" id="contactSubmitBtn" style="margin-top: 4px;">
+            <span>Send Message</span>
+          </button>
+        </form>
+
+        <div style="margin-top: 14px; padding: 10px; background: var(--bg-surface-elevated); border-radius: 4px; border: 1px solid var(--border-subtle); font-size: 11px; color: var(--text-dim);">
+          Messages are stored in the developer’s private Firebase inbox. They are not emailed.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-subtle" id="contactModalDoneBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="historyDetailModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="historyDetailTitle">
+    <section class="modal-card history-detail-card">
+      <div class="modal-header">
+        <h3 id="historyDetailTitle">Saved speech score</h3>
+        <button type="button" class="modal-close-btn" id="historyDetailCloseBtn" aria-label="Close saved score">&times;</button>
+      </div>
+      <div id="historyDetailBody" class="history-detail-body"></div>
+    </section>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="appToast" class="app-toast hidden" role="status" aria-live="polite"></div>
+
+  <footer class="app-footer">
+    <div class="footer-left">
+      <span>DELTAVOX &bull; Speech coaching</span>
+    </div>
+    <div class="footer-right">
+      <span>Theme: <strong id="currentThemeLabel">Peach &amp; Charcoal</strong></span>
+      <span>&bull;</span>
+      <button class="footer-link" id="footerAboutBtn">About Us</button>
+      <span>&bull;</span>
+      <button class="footer-link" id="footerContactBtn">Contact Us</button>
+      <span>&bull;</span>
+      <button class="footer-link" id="footerPrivacyBtn">Privacy Policy</button>
+      <span>&bull;</span>
+      <button class="footer-link" id="footerTermsBtn">Terms of Service</button>
+    </div>
+  </footer>
+
+  <script defer src="/app.js"></script>
+</body>
+</html>
