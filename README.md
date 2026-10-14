@@ -1,91 +1,132 @@
-# 🎙️ Speech Contrastive Analytics Engine
+# 🎙️ DELTAVOX: Speech Contrastive Analytics Engine
+> ***The sound of change.***  
+> **Hear exactly where your delivery fell apart, down to the second.**  
 > *Multimodal AI Hackathon 2026 — Track C*
-
-## 📁 Getting Started
-Clone or extract the repository and navigate into the project directory:
-```bash
-git clone https://github.com/Shimona012/DeltaVoX.git
-cd DELTAVOX
-```
 
 ---
 
-## 🏗️ Structure Overview
+## What is DeltaVox?
+
+Most speech analysis tools tell you **what** you said: transcripts, grammar, filler words, or an average words-per-minute pace. But when it comes to delivery, feedback is usually ambiguous: *"try to sound more energetic"* or *"be more engaging."* You could have all the enthusiasm in the world and still struggle to get it across effectively.
+
+**DeltaVox** replaces subjective guesswork with **contrastive speech analytics**. Instead of an abstract score, it measures the exact mathematical **delta** between your practice take and an ideal reference version of the same speech—hence the name:
+
+> *"At 0:14–0:19 your pitch flattened to 40% of the reference, and at 0:31 your projection dropped 1.8 standard deviations."*
+
+### Key Features
+- **Voice-Agnostic Pitch:** Raw Hz frequencies are translated to musical semitone cents on a log scale ($1200 \cdot \log_2(f_0 / 55\text{Hz})$). A 5-semitone inflection measures the same regardless of whether you have a deep bass or high soprano voice.
+- **Gain-Invariant Energy:** Root-Mean-Square (RMS) loudness is z-scored per take. Microphone hardware, distance, and recording levels do not count as delivery flaws—only the expressive contour matters.
+- **Dynamic Time Warping (DTW):** Real deliveries never match frame-for-frame. Sakoe–Chiba constrained DTW aligns variations in cadence and speaking speed so the comparison is always word-for-word.
+- **Deterministic Flaw Grounding:** Flags specific delivery breakdowns—monotone pitch collapse, projection drops, and intent-sensitive dead pauses—with start and end timestamps.
+- **Script vs. Live Speech Alignment:** Evaluates live audio against a prepared script or a reference take, accounting for rhetorical intent (persuasive oratory, storytelling, debate rebuttal, or lecture).
+- **Contextual Speech Generation:** Integrated with Gemini to draft custom speeches tailored to specific speaking time limits and target rhetorical intents.
+- **Math-Grounded Coaching:** Gemini translates verified acoustic measurements and flaw timestamps into readable, practical coaching tips without making up arbitrary diagnoses.
+- **Synthetic 5-Stage Benchmark:** Includes a built-in synthetic benchmark spanning five clear degradation tiers (L0 Ideal $\rightarrow$ L4 Egregious) for instant testing and one-click demos.
+
+---
+
+## Project Structure
 
 ```
 DELTAVOX/
 ├── backend/
-│   ├── main.py              # FastAPI server orchestrating endpoints
-│   ├── features.py          # Log-scale semitone pitch & RMS extractor
-│   ├── grounding.py         # Dynamic Time Warping (DTW) & temporal flaw grounder
-│   └── explainer.py         # Gemini 3.8 Flash causal feedback layer
+│   ├── main.py              # FastAPI application, routing, and preset endpoints
+│   ├── features.py          # Resilient audio loading, pYIN pitch, and RMS extraction
+│   ├── grounding.py         # DTW alignment, temporal flaw grounding, and rubric scoring
+│   ├── explainer.py         # Gemini causal explanation layer with offline fallback
+│   ├── auth.py              # Session management, password hashing, CSRF tokens
+│   └── database.py          # Local SQLite storage and state persistence
 ├── frontend/
-│   └── index.html           # Interactive UI (Waveform curves, Audio Docks, Rubric)
-├── dataset/                 # Contrastive spectrum recordings (L0 to L4)
-├── docs/                    # Technical Report draft
+│   ├── index.html           # Single-page UI with audio recorders and docks
+│   ├── app.js               # WaveSurfer visualization, interactive playback, and API calls
+│   └── style.css            # Responsive layout with custom themes
+├── dataset/                 # Contrastive benchmark recordings (speech_001_persuasive)
+├── tests/                   # Pytest suite (engine, auth, and security)
 └── README.md
 ```
 
 ---
 
-## How to Run the App Locally
+## Getting Started
 
-### 1. Launch Backend Server
-Open PowerShell / Terminal in the project directory:
-```powershell
+### 1. Prerequisites
+- Python 3.10+ (tested on Python 3.10–3.14)
+- `ffmpeg` installed on your system PATH (recommended for decoding browser WebM/Opus audio)
+
+### 2. Clone and Install
+```bash
+git clone https://github.com/Shimona012/DeltaVoX.git
 cd DELTAVOX
-$env:GEMINI_API_KEY="your_api_key_here"  # optional for live Gemini feedback
+
+# Create and activate virtual environment
+python -m venv .venv
+
+# Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# macOS/Linux:
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 3. Run Locally
+```bash
+# Optional: supply Gemini API key for live AI coaching notes
+$env:GEMINI_API_KEY="your_api_key_here"  # Windows PowerShell
+# export GEMINI_API_KEY="your_api_key_here"  # macOS/Linux
+
 python -m uvicorn backend.main:app --reload
 ```
 
-Then open `http://127.0.0.1:8000`. The FastAPI server serves the frontend and API together; opening `frontend/index.html` directly will not enable sign-in or analysis.
-
-### Account sign-in setup
-
-Email verification and password reset need an SMTP account. Configure these environment variables in the same PowerShell window before starting the server:
-
-```powershell
-$env:SCE_PUBLIC_BASE_URL="http://127.0.0.1:8000"
-$env:SCE_SMTP_HOST="smtp.example.com"
-$env:SCE_SMTP_PORT="587"
-$env:SCE_SMTP_USERNAME="your-smtp-user"
-$env:SCE_SMTP_PASSWORD="your-smtp-password"
-$env:SCE_SMTP_FROM="noreply@example.com"
-$env:SCE_SMTP_STARTTLS="true"
-```
-
-### Developer Contact Us inbox (Firestore)
-
-Contact Us submissions are stored in Firestore and are not emailed. Review them in Firebase Console → Firestore Database → `contact_requests`. The form offers anonymous submission or an email address for a reply. The service-account key is private server data; never place it in `frontend/` or commit it.
-
-1. In Firebase Console, create or select a project and create a Firestore database.
-2. Set its rules from the project’s `firestore.rules` file and deploy them. Client-side Firestore reads and writes are denied; DeltaVox accesses it through the server Admin SDK.
-3. Create a Firebase Admin service-account JSON key and save it outside this project folder. Put its full path in `SCE_FIREBASE_SERVICE_ACCOUNT`. Treat the JSON file like a password.
-4. Install the updated requirements and restart the backend. Contact Us documents are accessible through the Firebase Console to project members; client-side Firestore access remains denied by the included rules.
-
-PowerShell setup for the current terminal (replace every placeholder):
-
-```powershell
-$env:SCE_FIREBASE_PROJECT_ID="your-firebase-project-id"
-$env:SCE_FIREBASE_SERVICE_ACCOUNT="C:\secrets\firebase-service-account.json"
-python -m pip install -r requirements.txt
-python -m uvicorn backend.main:app --reload
-```
-
-Copy `.env.example` to `.env`, fill in the values, install the updated requirements, and restart DeltaVox. `.env` is ignored by Git. For a hosted deployment, add the same values through the hosting provider’s environment settings.
-
-Only the Firebase project ID and server-side service-account path are needed for the Firestore contact inbox. See [Firebase Admin setup](https://firebase.google.com/docs/admin/setup).
-
-Speech scripts include controls for target duration and pace. These values are passed to Gemini when `GEMINI_API_KEY` is configured. Without that key, the app provides a short English offline template; other languages and longer custom scripts require the key.
+Open **`http://127.0.0.1:8000`** in your browser.  
+*(Note: FastAPI serves the frontend and backend together on the same port so cookies, CSRF tokens, and audio endpoints work out of the box).*
 
 ---
 
-## 🗓️ 10-Day Mastery & Development Roadmap
+## Configuration & Optional Services
 
-| Day | Focus Area | What You Learn & Build |
+DeltaVox works completely offline using deterministic feedback templates and local SQLite storage. For advanced capabilities, configure environment variables in a `.env` file (see `.env.example`):
+
+### Live Gemini Coaching & Speech Generation
+Set `GEMINI_API_KEY` to enable Gemini 3.8 Flash causal coaching summaries and speech generation tailored to speech length and rhetorical intent. Without an API key, DeltaVox uses deterministic offline coaching templates.
+
+### Account Verification & Password Reset (SMTP)
+```ini
+SCE_PUBLIC_BASE_URL="http://127.0.0.1:8000"
+SCE_SMTP_HOST="smtp.example.com"
+SCE_SMTP_PORT=587
+SCE_SMTP_USERNAME="your-smtp-user"
+SCE_SMTP_PASSWORD="your-smtp-password"
+SCE_SMTP_FROM="noreply@example.com"
+SCE_SMTP_STARTTLS="true"
+```
+
+### Developer Contact Inbox (Firebase Firestore)
+Contact form submissions can be forwarded to a private Firestore collection without exposing client-side credentials:
+```ini
+SCE_FIREBASE_PROJECT_ID="your-firebase-project-id"
+SCE_FIREBASE_SERVICE_ACCOUNT="/path/to/service-account.json"
+```
+
+---
+
+## Running the Test Suite
+
+DeltaVox includes an automated test suite verifying audio engine math, monotonic benchmark degradation, rate limiting, path traversal defenses, and authentication:
+
+```bash
+pytest
+```
+
+---
+
+## Development Milestones
+
+| Stage | Focus Area | Implementation |
 |---|---|---|
-| **Day 1–2** | **Scaffolding & Core Audio** | Understand Librosa, Hz → Log Cents math, test audio extraction |
-| **Day 3–4** | **DTW Alignment & Grounding** | Learn Dynamic Time Warping, z-score normalization across voices |
-| **Day 5–6** | **Dataset & Flaw Gradient** | Build L0 → L4 contrastive pairs (TED, MLK, Debate excerpts) |
-| **Day 7–8** | **Gemini Causal Integration** | Prompt engineering for zero-hallucination mathematical coaching |
-| **Day 9–10**| **UI Polish & Technical Report** | Master WaveSurfer visualization, finalize 6-page report & 3-min demo video |
+| **Phase 1** | **Acoustic Extraction** | Librosa feature extraction, pYIN pitch tracking, Hz $\rightarrow$ Log Cents conversion |
+| **Phase 2** | **Alignment & Grounding** | Sakoe–Chiba Dynamic Time Warping, z-score energy normalization across voices |
+| **Phase 3** | **Contrastive Benchmark** | 5-level synthetic degradation spectrum (L0 Ideal $\rightarrow$ L4 Egregious) |
+| **Phase 4** | **Causal Explanations** | Grounded Gemini integration using metric deltas with strict offline fallback |
+| **Phase 5** | **Hardening & UI** | CSRF protection, rate limiting, responsive dual-waveform player, multi-theme UI |
