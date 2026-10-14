@@ -14,7 +14,9 @@ Most speech analysis tools tell you **what** you said: transcripts, grammar, fil
 > *"At 0:14–0:19 your pitch flattened to 40% of the reference, and at 0:31 your projection dropped 1.8 standard deviations."*
 
 ### Key Features
-- **Voice-Agnostic Pitch:** Raw Hz frequencies are translated to musical semitone cents on a log scale ($1200 \cdot \log_2(f_0 / 55\text{Hz})$). A 5-semitone inflection measures the same regardless of whether you have a deep bass or high soprano voice.
+- **Voice-Agnostic Pitch:** Raw Hz frequencies are translated to musical semitone cents on a log scale.
+$$\text{Cents} = 1200 \cdot \log_2\left(\frac{f_0}{55\text{ Hz}}\right)$$
+A 5-semitone inflection measures the same regardless of whether you have a deep bass or high soprano voice.
 - **Gain-Invariant Energy:** Root-Mean-Square (RMS) loudness is z-scored per take. Microphone hardware, distance, and recording levels do not count as delivery flaws—only the expressive contour matters.
 - **Dynamic Time Warping (DTW):** Real deliveries never match frame-for-frame. Sakoe–Chiba constrained DTW aligns variations in cadence and speaking speed so the comparison is always word-for-word.
 - **Deterministic Flaw Grounding:** Flags specific delivery breakdowns—monotone pitch collapse, projection drops, and intent-sensitive dead pauses—with start and end timestamps.
